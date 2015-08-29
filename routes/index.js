@@ -12,11 +12,11 @@ router.get('/', function(req, res, next) {
 			var groupsOfResourse = groupOfResourse.getAllWithTypesOrResourses(function (groupsOfResourse) {
 				res.render('index', 
 					{ 
-						title: 'Express',
+						title: 'Туристичні ресурси України',
 						regions: regions,
 						typesOfTourism: typesOfTourism,
 						groupsOfResourse: groupsOfResourse,
-						region: selectedRegion
+						selectedRegion: selectedRegion
 					}
 				);
 			}, next);

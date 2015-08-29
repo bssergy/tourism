@@ -19,6 +19,50 @@ block content
             p
               a.btn.btn-lg.btn-primary(href='#') Переглянути
   div.container
+    div.nav-form
+      form.form-inline
+        div.form-group
+          label(for="regionInput") Область
+        div.form-group
+          select(id="regionInput").form-control.selectpicker
+            if selectedRegion
+              option Всі області
+            else
+              option(selected) Всі області
+            optgroup
+            each region in regions
+              if region.RegionId == selectedRegion
+                option(value=region.RegionId, selected)= region.Name
+              else
+                option(value=region.RegionId)= region.Name
+        div.form-group
+          label(for="typeOfTourismInput") Вид туризму
+        div.form-group
+          select(id="typeOfTourismInput").form-control.selectpicker
+            if selectedTypeOfToursim
+              option Всі види
+            else
+              option(selected) Всі види
+            optgroup
+            each typeOfTourism in typesOfTourism
+              if typeOfTourism.TypeOfTourismId == selectedTypeOfToursim
+                option(value=typeOfTourism.TypeOfTourismId, selected)= typeOfTourism.Name
+              else
+                option(value=typeOfTourism.TypeOfTourismId)= typeOfTourism.Name
+        div.form-group
+          label(for="typeOfResourseInput") Вид ресурсу
+        div.form-group
+          select(id="typeOfResourseInput").form-control.selectpicker
+            if selectedTypeOfResourse
+              option Всі види
+            else
+              option(selected) Всі види
+            each groupOfResourse in groupsOfResourse
+              optgroup(label = groupOfResourse.Name)
+                each typeOfResourse in groupOfResourse.types
+                  option(valuse=typeOfResourse.TypeOfResourseId)= typeOfResourse.Name
+        div.form-group
+          a.btn.btn-primary Показати
     div.col-md-3
       h4 Вид туризму
       ul.nav.nav-pills.nav-stacked
