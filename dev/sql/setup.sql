@@ -2,7 +2,7 @@
 --               CREATE TABLES
 -- ==========================================
 
-CREATE TABLE IF NOT EXISTS Region (
+CREATE TABLE IF NOT EXISTS region (
 	RegionId INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     Name VARCHAR(80) NOT NULL
 );
@@ -22,6 +22,32 @@ CREATE TABLE IF NOT EXISTS type_of_resourse (
     GroupOfResourseId INT UNSIGNED,
     Name VARCHAR(80) NOT NULL,
     CONSTRAINT FOREIGN KEY FK_Type_Group (GroupOfResourseId) REFERENCES group_of_resourse(GroupOfResourseId)
+);
+
+CREATE TABLE IF NOT EXISTS resourse (
+	ResourseId INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    RegionId INT UNSIGNED,
+    Name VARCHAR(80) NOT NULL,
+    CreatedOn DATETIME NOT NULL DEFAULT NOW(),
+    TSLastChanged TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    MainImagePath VARCHAR(255) NULL,
+    Description VARCHAR(255) NULL,
+    Content TEXT NULL,
+    CONSTRAINT FOREIGN KEY FK_Resourse_Region (RegionId) REFERENCES region(RegionId)
+);
+
+CREATE TABLE IF NOT EXISTS resourse_group_of_resourse (
+	ResourseId INT UNSIGNED,
+    GroupOfResourseId INT UNSIGNED,
+    CONSTRAINT FOREIGN KEY FK_Resourse_Group_Resourse (ResourseId) REFERENCES resourse(ResourseId),
+    CONSTRAINT FOREIGN KEY FK_Resourse_Group_Group (GroupOfResourseId) REFERENCES group_of_resourse(GroupOfResourseId)
+);
+
+CREATE TABLE IF NOT EXISTS resourse_type_of_resourse (
+	ResourseId INT UNSIGNED,
+    TypeOfResourseId INT UNSIGNED,
+    CONSTRAINT FOREIGN KEY FK_Resourse_Type_Resourse (ResourseId) REFERENCES resourse(ResourseId),
+    CONSTRAINT FOREIGN KEY FK_Resourse_Type_Type (TypeOfResourseId) REFERENCES type_of_resourse(TypeOfResourseId)
 );
 
 -- ==========================================

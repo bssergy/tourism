@@ -14,15 +14,15 @@ module.exports.getAll = function (cb, next) {
 
 module.exports.getAllWithTypesOrResourses = function (cb, next) {
 	connection.query(
-		   'SELECT 												\
-				g.GroupOfResourseId,							\
-			    g.Name AS GroupName,							\
-			    t.Name,											\
-			    t.TypeOfResourseId 								\
-			FROM group_of_resourse g 							\
-			LEFT JOIN type_of_resourse t 						\
-				ON g.GroupOfResourseId = t.GroupOfResourseId 	\
-			ORDER BY g.GroupOfResourseId, t.TypeOfResourseId;',
+	   'SELECT 												\
+			g.GroupOfResourseId,							\
+		    g.Name AS GroupName,							\
+		    t.Name,											\
+		    t.TypeOfResourseId 								\
+		FROM group_of_resourse g 							\
+		LEFT JOIN type_of_resourse t 						\
+			ON g.GroupOfResourseId = t.GroupOfResourseId 	\
+		ORDER BY g.GroupOfResourseId, t.TypeOfResourseId;',
 		function (err, rows, fields) {
 			if (err) {
 				next();

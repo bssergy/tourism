@@ -1,0 +1,59 @@
+extends ./../layout
+block content
+  div.container
+    h1 Новий ресурс
+    form
+      div.col-md-6
+        div.form-group
+          label(for="Name") Назва
+          input(type="text", id="Name").form-control
+        div.form-group
+          label(for="Name") Короткий опис
+          textarea(rows="2").form-control
+        div.form-group
+          a(href="/admin/gallery", id="selectPhotoBtn").btn.btn-primary Вибрати фото...
+        div.form-group
+          label(for="regionInput") Область
+          select(id="regionInput").form-control.selectpicker
+            option Не вибрано
+            optgroup
+            each region in regions
+              if region.RegionId == selectedRegion
+                option(value=region.RegionId, selected)= region.Name
+              else
+                option(value=region.RegionId)= region.Name
+        div.form-group
+          label(for="typeOfTourismInput") Вид туризму
+          select(id="typeOfTourismInput", multiple).form-control.selectpicker
+            option Не вибрано
+            optgroup
+            each typeOfTourism in typesOfTourism
+              if typeOfTourism.TypeOfTourismId == selectedTypeOfToursim
+                option(value=typeOfTourism.TypeOfTourismId, selected)= typeOfTourism.Name
+              else
+                option(value=typeOfTourism.TypeOfTourismId)= typeOfTourism.Name
+        div.form-group
+          label(for="typeOfResourseInput") Вид ресурсу
+          select(id="typeOfResourseInput", multiple).form-control.selectpicker
+            option Не вибрано
+            each groupOfResourse in groupsOfResourse
+              optgroup(label = groupOfResourse.Name)
+                each typeOfResourse in groupOfResourse.types
+                  option(valuse=typeOfResourse.TypeOfResourseId)= typeOfResourse.Name
+        div.form-inline
+          div.form-group
+            button(type="button", data-dismiss="modal").btn.btn-default Відмінити
+          div.form-group
+            button(type="button").btn.btn-primary Зберегти
+block scripts
+  script.
+    $(document).ready(function() {
+      $('.selectpicker').selectpicker();
+      $('#selectPhotoBtn').click(function(e) {
+          e.preventDefault();
+          $.get($(this).attr('href'), function(data) {
+              $(data).appendTo('body').modal();
+            });
+          return false;
+        });
+    });

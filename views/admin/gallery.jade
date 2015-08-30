@@ -1,0 +1,20 @@
+div.modal.fade
+  div.modal-dialog
+    div.modal-content
+      div.modal-header
+        button(type="button", data-dismiss="modal" aria-label="Close").close
+          span(aria-hidden="true") &times;
+        h4.modal-title Галерея
+      div.modal-body
+        div.row
+          each directory in files.directories
+            div.col-xs-6.col-md-3
+              a(href="#").thumbnail
+                img(src="/images/folder_002.png")
+          each file in files.files
+            div.col-xs-6.col-md-3
+              a(href="#").thumbnail
+                img(src=file)
+      div.modal-footer
+        button(type="button", data-dismiss="modal").btn.btn-default Закрити
+        button(type="button").btn.btn-primary Вибрати

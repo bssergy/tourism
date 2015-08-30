@@ -19,7 +19,7 @@ block content
             p
               a.btn.btn-lg.btn-primary(href='#') Переглянути
   div.container
-    div.nav-form
+    div.toolbar
       form.form-inline
         div.form-group
           label(for="regionInput") Область
@@ -106,3 +106,8 @@ block content
                           a.btn.btn-primary(role="button") Переглянути
               - }
       - }
+block scripts
+  script.
+    $(document).ready(function() {
+      $('.selectpicker').selectpicker();
+    });

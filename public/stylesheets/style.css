@@ -46,6 +46,10 @@ body {
   margin-right: 5px;
 }
 
-.nav-form {
+.toolbar {
   margin: 10px 0 10px 0;
+}
+
+textarea {
+  resize: none;
 }
