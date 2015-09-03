@@ -6,10 +6,10 @@ div.modal.fade
           span(aria-hidden="true") &times;
         h4.modal-title Галерея
       div.modal-body
-        div.row
+        div.row.gallery
           each directory in files.directories
             div.col-xs-6.col-md-3
-              a(href="#").thumbnail
+              a(href=directory.path).thumbnail.folder
                 img(src="/images/folder_002.png")
           each file in files.files
             div.col-xs-6.col-md-3

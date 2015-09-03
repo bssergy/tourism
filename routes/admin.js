@@ -3,8 +3,7 @@ var router = express.Router();
 var region = require('./../models/Region');
 var typeOfTourism = require('./../models/TypeOfTourism');
 var groupOfResourse = require('./../models/GroupOfResourse');
-var fs = require('fs');
-var path = require('path');
+var gallery = require('./../gallery')('/images/content');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -43,33 +42,15 @@ router.get('/add', function(req, res, next) {
 	}, next);
 });
 
-router.get('/gallery', function(req, res, next) {
-	var dir_path = './public/images/content';
-	var readdir = function (dir_path, done) {
-		var results = { path: dir_path, directories: [], files: [] };
-		fs.readdir(dir_path, function (err, files) {
-			if (err) return done(err);
-			var pending = files.length;
-			if (!pending) return done(null, results);
-			files.forEach(function (file) {
-				var absolutePath = path.join(dir_path, file);
-				fs.stat(absolutePath, function (err, stat) {
-					if (stat && stat.isDirectory()) {
-						var directory = { path: absolutePath, directories: [], files: [] };
-						results.directories.push(directory);
-						if (!--pending) done(null, results);
-					} else {
-						results.files.push(absolutePath);
-						if (!--pending) done(null, results);
-					}
-				});
-			});
-		});
-	};
-	readdir(dir_path, function (err, files) {
-		if (err) { next(err) };		res.render('./admin/gallery', { files: files });
-	})
-	
+router.get('/gallery:path?*', function(req, res, next) {
+	req.query.path = req.query.path || '//images//content';
+	gallery.getFilelist(req.query.path, function (err, files) {
+		if (err) {
+			next(err)
+		};
+
+		res.render('./admin/gallery', { files: files });
+	});	
 });
 
 module.exports = router;
