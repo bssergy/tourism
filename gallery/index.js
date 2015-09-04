@@ -10,6 +10,11 @@ module.exports = function(pathToGallery) {
 		var serverPath = path.join(SERVER_ROOT, dir_path);
 		var clientPath = path.join(CLIENT_ROOT, dir_path);
 		var results = { path: clientPath, directories: [], files: [] };
+		if (clientPath != '\\images\\content') {
+			console.log(clientPath);
+			results.directories.push({ path: path.dirname(clientPath) });
+		};
+
 		fs.readdir(serverPath, function (err, files) {
 			if (err) return done(err);
 			var pending = files.length;
