@@ -30,24 +30,24 @@ CREATE TABLE IF NOT EXISTS resourse (
     Name VARCHAR(80) NOT NULL,
     CreatedOn DATETIME NOT NULL DEFAULT NOW(),
     TSLastChanged TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    MainImagePath VARCHAR(255) NULL,
+    PhotoUrl VARCHAR(255) NULL,
     Description VARCHAR(255) NULL,
     Content TEXT NULL,
-    CONSTRAINT FOREIGN KEY FK_Resourse_Region (RegionId) REFERENCES region(RegionId)
+    CONSTRAINT FOREIGN KEY FK_resourse_region (RegionId) REFERENCES region(RegionId)
 );
 
-CREATE TABLE IF NOT EXISTS resourse_group_of_resourse (
+CREATE TABLE IF NOT EXISTS resourse_type_of_tourism (
 	ResourseId INT UNSIGNED,
-    GroupOfResourseId INT UNSIGNED,
-    CONSTRAINT FOREIGN KEY FK_Resourse_Group_Resourse (ResourseId) REFERENCES resourse(ResourseId),
-    CONSTRAINT FOREIGN KEY FK_Resourse_Group_Group (GroupOfResourseId) REFERENCES group_of_resourse(GroupOfResourseId)
+    TypeOfTourismId INT UNSIGNED,
+    CONSTRAINT FOREIGN KEY FK_resourse_type_of_tourism_resourse (ResourseId) REFERENCES resourse(ResourseId),
+    CONSTRAINT FOREIGN KEY FK_resourse_type_of_tourism_type_of_tourism (TypeOfTourismId) REFERENCES type_of_tourism(TypeOfTourismId)
 );
 
 CREATE TABLE IF NOT EXISTS resourse_type_of_resourse (
 	ResourseId INT UNSIGNED,
     TypeOfResourseId INT UNSIGNED,
-    CONSTRAINT FOREIGN KEY FK_Resourse_Type_Resourse (ResourseId) REFERENCES resourse(ResourseId),
-    CONSTRAINT FOREIGN KEY FK_Resourse_Type_Type (TypeOfResourseId) REFERENCES type_of_resourse(TypeOfResourseId)
+    CONSTRAINT FOREIGN KEY FK_resourse_type_of_resourse (ResourseId) REFERENCES resourse(ResourseId),
+    CONSTRAINT FOREIGN KEY FK_resourse_type_of_resourse_type_of_resourse (TypeOfResourseId) REFERENCES type_of_resourse(TypeOfResourseId)
 );
 
 -- ==========================================
