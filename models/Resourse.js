@@ -1,25 +1,27 @@
 var connection = require('./Db');
 var mysql = require('mysql');
 
-module.exports.getAllPaged = function (page, size, cb, next) {
+module.exports.getAllPaged = function (page, size, cb) {
 	connection.query(
 	   'SELECT 													\
 	    	ResourseId,											\
-	    	Name												\
+	    	Name,												\
+	    	Description,										\
+	    	CreatedOn											\
 	    FROM resourse 											\
-	    ORDER BY CreatedOn DESC, ResourseId DESC 				\
+	    ORDER BY ResourseId 					 				\
 	    LIMIT ' + page * size + ',' + size,
 		function (err, rows, fields) {
 			if (err) {
-				next(err);
+				cb(err);
 			};
 
-			cb(rows);
+			cb(null, rows);
 		}
 	);
 };
 
-module.exports.add = function (resourse, cb, next) {
+module.exports.add = function (resourse, cb) {
 	connection.query(
 		'INSERT INTO resourse SET ?',
 		{ 
@@ -31,7 +33,7 @@ module.exports.add = function (resourse, cb, next) {
 		},
 		function (err, result) {
 			if (err) {
-				next(err);
+				cb(err);
 			};
 			var resourseId = result.insertId;
 

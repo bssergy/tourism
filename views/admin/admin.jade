@@ -11,12 +11,13 @@ block content
         th Опис
         th Дата створення
         th Дії
-      tr
-        td 1
-        td Олеський замок
-        td дліваовіаів а лдіволдао
-        td 30.08.2015
-        td
-          a Змінити
-          |  | 
-          a Видалити
+      each resourse in resourses
+        tr
+          td= resourse.ResourseId
+          td= resourse.Name
+          td= resourse.Description
+          td= resourse.CreatedOn
+          td
+            a Змінити
+            |  | 
+            a Видалити
