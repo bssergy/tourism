@@ -16,8 +16,19 @@ block content
           td= resourse.ResourseId
           td= resourse.Name
           td= resourse.Description
-          td= resourse.CreatedOn
+          td= moment(resourse.CreatedOn).format("LLL")
           td
             a Змінити
             |  | 
             a Видалити
+    nav
+      ul.pagination
+        li(class=page == 0 ? 'disabled' : '')
+          a(href="/admin/resourse?page=" + (page - 1) aria-label="Previous")
+            span(aria-hidden="true") &laquo;
+        - for(var i=0; i<Math.min(pagesCount, 10); i++)
+          li(class=page==i ? 'active' : '')
+            a(href="/admin/resourse?page=" + i)= i+1
+        li(class=page == pagesCount - 1 ? 'disabled' : '')
+          a(href="/admin/resourse?page=" + (page + 1) aria-label="Next")
+            span(aria-hidden="true") &raquo;

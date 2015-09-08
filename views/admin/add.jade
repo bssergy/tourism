@@ -18,8 +18,6 @@ block content
           div.form-group
             label(for="RegionId") Область
             select(id="RegionId", name="RegionId").form-control.selectpicker
-              option(value="") Не вибрано
-              optgroup
               each region in regions
                 if region.RegionId == selectedRegion
                   option(value=region.RegionId, selected)= region.Name

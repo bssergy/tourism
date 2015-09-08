@@ -8,12 +8,23 @@ var resourse = require('./../models/resourse');
 /* GET home page. */
 router.get('/resourse', function(req, res, next) {
 	var selectedRegion = req.query.region;
-	resourse.getAllPaged(0, 10, function (err, resourses) {
+
+	var page = parseInt(req.query.page) || 0;
+	var pageSize = parseInt(req.query.pageSize) || 10;
+	
+	resourse.getAllPaged(page, pageSize, function (err, results) {
 		if (err) {
 			next(err);
 		};
 
-		res.render('./admin/admin', { resourses: resourses });
+		var pagesCount = Math.ceil(results.count / pageSize);
+
+		res.render('./admin/admin', {
+			resourses: results.resourses,
+			page: page,
+			pageSize: pageSize,
+			pagesCount: pagesCount
+		});
 	}, next);
 });
 

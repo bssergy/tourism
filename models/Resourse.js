@@ -16,7 +16,14 @@ module.exports.getAllPaged = function (page, size, cb) {
 				cb(err);
 			};
 
-			cb(null, rows);
+			var resourses = rows;
+			connection.query('SELECT COUNT(1) AS Count FROM resourse', function (err, rows) {
+				if (err) {
+					cb(err);
+				};
+
+				cb(null, { resourses: resourses, count: rows[0].Count });
+			});
 		}
 	);
 };

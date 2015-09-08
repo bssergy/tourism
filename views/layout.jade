@@ -13,4 +13,8 @@ html
     script(src='https://code.jquery.com/jquery-2.1.4.min.js', type='text/javascript')
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js')
     script(src='/js/bootstrap-select/bootstrap-select.js')
+    script.
+      $('.pagination .disabled a, .pagination .active a').on('click', function(e) {
+        e.preventDefault();
+      });
     block scripts
