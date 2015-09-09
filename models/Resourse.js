@@ -28,6 +28,27 @@ module.exports.getAllPaged = function (page, size, cb) {
 	);
 };
 
+module.exports.getById = function (id, cb) {
+	connection.query(
+	   'SELECT 													\
+	    	ResourseId,											\
+	    	Name,												\
+	    	Description,										\
+	    	CreatedOn,											\
+	    	PhotoUrl											\
+	    FROM resourse 											\
+	    WHERE ResourseId = ?',
+	    [ id ],
+		function (err, rows, fields) {
+			if (err) {
+				cb(err);
+			};
+
+			cb(null, rows[0]);
+		}
+	);
+};
+
 module.exports.add = function (resourse, cb) {
 	connection.query(
 		'INSERT INTO resourse SET ?',

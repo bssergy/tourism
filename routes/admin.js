@@ -45,7 +45,30 @@ router.get('/resourse/add', function(req, res, next) {
 	}, next);
 });
 
-router.post('/resourse', function(req, res, next) {
+router.get('/resourse/edit/:id', function(req, res, next) {
+	region.getAll(function (regions) {
+		var typesOfTourism = typeOfTourism.getAll(function (typesOfTourism) {
+			var groupsOfResourse = groupOfResourse.getAllWithTypesOrResourses(function (groupsOfResourse) {
+				resourse.getById(req.params.id, function (err, resourse) {
+					if (err) {
+						next(err);
+					};
+					
+					res.render('./admin/add', 
+					{ 
+						title: 'Новий ресурс',
+						regions: regions,
+						typesOfTourism: typesOfTourism,
+						groupsOfResourse: groupsOfResourse,
+						resourse: resourse
+					});
+				});
+			}, next);
+		}, next);
+	}, next);
+});
+
+router.post('/resourse/add', function(req, res, next) {
 	resourse.add(req.body, function (result) {
 		res.redirect('/admin/resourse');
 		return;

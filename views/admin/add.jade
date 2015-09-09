@@ -2,18 +2,20 @@ extends ./../layout
 block content
   div.container
     h1 Новий ресурс
-    form(action="/admin/resourse/", method="post")
+    form(action="/admin/resourse/add/", method="post")
       div.row
         div.col-md-6
           div.form-group
             label(for="Name") Назва
-            input(type="text", id="Name", name="Name").form-control
+            input(type="text", id="Name", name="Name", value=resourse ? resourse.Name : '').form-control
           div.form-group
             label(for="Name") Короткий опис
             textarea(rows="2", id="Description", name="Description").form-control
+              if resourse
+                | #{resourse.Description}
           div.form-group
             label(for="Name", id="PhotoUrl") Фото (URL)
-            input(type="text", name="PhotoUrl").form-control
+            input(type="text", name="PhotoUrl", value=resourse ? resourse.PhotoUrl : '').form-control
         div.col-md-6
           div.form-group
             label(for="RegionId") Область
@@ -46,7 +48,7 @@ block content
         textarea(id="Content", name="Content",rows="20")
       div.form-inline
         div.form-group
-          button(type="button").btn.btn-default Відмінити
+          a(href="/admin/resourse").btn.btn-default Відмінити
         div.form-group
           input(type="submit", value="Зберегти").btn.btn-primary
 block scripts

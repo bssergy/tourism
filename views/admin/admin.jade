@@ -18,7 +18,7 @@ block content
           td= resourse.Description
           td= moment(resourse.CreatedOn).format("LLL")
           td
-            a Змінити
+            a(href="/admin/resourse/edit/" + resourse.ResourseId) Змінити
             |  | 
             a Видалити
     nav
