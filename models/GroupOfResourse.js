@@ -1,31 +1,30 @@
 var connection = require('./Db');
 
-module.exports.getAll = function (cb, next) {
+module.exports.getAll = function (cb) {
 	connection.query('SELECT GroupOfResourseId, Name FROM group_of_resourse',
 		function (err, rows, fields) {
 			if (err) {
-				next();
+				cb(err);
 			};
 
-			cb(rows);
+			cb(null, rows);
 		}
 	);
 };
 
-module.exports.getAllWithTypesOrResourses = function (cb, next) {
+module.exports.getAllWithTypesOrResourses = function (cb) {
 	connection.query(
-	   'SELECT 												\
-			g.GroupOfResourseId,							\
-		    g.Name AS GroupName,							\
-		    t.Name,											\
-		    t.TypeOfResourseId 								\
-		FROM group_of_resourse g 							\
-		LEFT JOIN type_of_resourse t 						\
-			ON g.GroupOfResourseId = t.GroupOfResourseId 	\
+	   'SELECT 																		\
+			g.GroupOfResourseId,													\
+		    g.Name AS GroupName,													\
+		    t.Name,																	\
+		    t.TypeOfResourseId 														\
+		FROM group_of_resourse g 													\
+		LEFT JOIN type_of_resourse t ON g.GroupOfResourseId = t.GroupOfResourseId 	\
 		ORDER BY g.GroupOfResourseId, t.TypeOfResourseId;',
-		function (err, rows, fields) {
+		function (err, rows) {
 			if (err) {
-				next();
+				cb(err);
 			};
 
 			var group;
@@ -45,7 +44,7 @@ module.exports.getAllWithTypesOrResourses = function (cb, next) {
 				group.types.push({ TypeOfResourseId: type.TypeOfResourseId, Name: type.Name });
 			}
 
-			cb(groups);
+			cb(null, groups);
 		}
 	);
 };

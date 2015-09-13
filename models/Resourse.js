@@ -1,5 +1,6 @@
 var connection = require('./Db');
 var mysql = require('mysql');
+var async = require('async');
 
 module.exports.getAllPaged = function (page, size, cb) {
 	connection.query(
@@ -28,10 +29,11 @@ module.exports.getAllPaged = function (page, size, cb) {
 	);
 };
 
-module.exports.getById = function (id, cb) {
+var getById = function (id, cb) {
 	connection.query(
 	   'SELECT 													\
 	    	ResourseId,											\
+	    	RegionId,											\
 	    	Name,												\
 	    	Description,										\
 	    	CreatedOn,											\
@@ -39,17 +41,80 @@ module.exports.getById = function (id, cb) {
 	    FROM resourse 											\
 	    WHERE ResourseId = ?',
 	    [ id ],
-		function (err, rows, fields) {
+		function (err, rows) {
 			if (err) {
 				cb(err);
 			};
 
-			cb(null, rows[0]);
+			var resourse = rows[0];
+			connection.query(
+			   'SELECT TypeOfResourseId 						\
+				FROM resourse_type_of_resourse 					\
+				WHERE ResourseId = ?',
+				[ id ],
+				function (err, rows) {
+					if (err) {
+						cb(err);
+					};
+
+					var ids = [];
+					rows.forEach(function (item) {
+						ids.push(item.TypeOfResourseId);
+					});
+
+					resourse.TypeOfResourseIds = ids;
+
+					connection.query(
+					   'SELECT TypeOfTourismId 					\
+						FROM resourse_type_of_tourism 			\
+						WHERE ResourseId = ?',
+						[ id ],
+						function (err, rows) {
+							if (err) {
+								cb(err);
+							};
+
+							var ids = [];
+							rows.forEach(function (item) {
+								ids.push(item.TypeOfTourismId);
+							});
+
+							resourse.TypeOfTourismIds = ids;
+
+							cb(null, resourse);
+						}
+					);
+				}
+			);
 		}
 	);
 };
 
-module.exports.add = function (resourse, cb) {
+module.exports.getById = getById;
+
+module.exports.addOrUpdate = function (resourse, cb) {
+	if (!Array.isArray(resourse.TypeOfTourismIds))
+	{
+		resourse.TypeOfTourismIds = resourse.TypeOfTourismIds ? [ resourse.TypeOfTourismIds ] : [];
+	};
+
+	if (!Array.isArray(resourse.TypeOfResourseIds))
+	{
+		resourse.TypeOfResourseIds = resourse.TypeOfResourseIds ? [ resourse.TypeOfResourseIds ] : [];
+	};
+
+	resourse.TypeOfTourismIds = resourse.TypeOfTourismIds.map(function(item) {
+	    return parseInt(item, 10);
+	});
+	resourse.TypeOfResourseIds = resourse.TypeOfResourseIds.map(function(item) {
+	    return parseInt(item, 10);
+	});
+
+	if (resourse.ResourseId) {
+		update(resourse, cb);
+		return;
+	};
+
 	connection.query(
 		'INSERT INTO resourse SET ?',
 		{ 
@@ -121,11 +186,157 @@ module.exports.add = function (resourse, cb) {
 				})
 			}
 
-			var fn = Array.isArray(resourse.TypeOfTourismId) ? attachForTypesOfTourism : attachForTypeOfTourism;
-			fn.apply(this, [resourse.TypeOfTourismId, function () {
-				var fn = Array.isArray(resourse.TypeOfResourseId) ? attachForTypesOfResourse : attachForTypeOfResourse;
-				fn.apply(this, [resourse.TypeOfResourseId, cb]);
-			}]);
+			attachForTypesOfTourism(resourse.TypeOfTourismIds, function (err) {
+				attachForTypesOfResourse(resourse.TypeOfResourseIds, cb);
+			});
 		}
 	);
-}
+};
+
+var attachTypeOfTourism = function (resourseId, typeOfTourismId, cb) {
+	connection.query('INSERT INTO resourse_type_of_tourism SET ?',
+	{
+		ResourseId: resourseId,
+		TypeOfTourismId: typeOfTourismId
+	}, cb);
+};
+
+var attachTypesOfTourism = function (resourseId, typeOfTourismIds, cb) {
+	if (!typeOfTourismIds.length) { 
+		cb();
+		return;
+	};
+
+	var typeOfTourismId = typeOfTourismIds.pop();
+
+	attachTypeOfTourism(resourseId, typeOfTourismId, function (err, results) {
+		if (err) {
+			cb(err);
+		};
+
+		attachTypesOfTourism(resourseId, typeOfTourismIds, cb);
+	})
+};
+
+var detachTypesOfTourism = function (resourseId, typesOfTourismId, cb) {
+	if (!typesOfTourismId.length) {
+		cb();
+		return;
+	};
+
+	connection.query(
+			   'DELETE FROM resourse_type_of_tourism 			\
+				WHERE ResourseId = ' + resourseId + '			\
+					AND TypeOfTourismId IN (' + typesOfTourismId.join(',') + ')',
+	function (err) {
+		cb(err);
+	});
+};
+
+var attachTypeOfResourse = function (resourseId, typeOfResourseId, cb) {
+	connection.query('INSERT INTO resourse_type_of_resourse SET ?',
+	{
+		ResourseId: resourseId,
+		TypeOfResourseId: typeOfResourseId
+	}, cb);
+};
+
+var attachTypesOfResourse = function (resourseId, typeOfResourseIds, cb) {
+	if (!typeOfResourseIds.length) { 
+		cb();
+		return;
+	};
+
+	var typeOfResourseId = typeOfResourseIds.pop();
+
+	attachTypeOfResourse(resourseId, typeOfResourseId, function (err, results) {
+		if (err) {
+			cb(err);
+		};
+
+		attachTypesOfResourse(resourseId, typeOfResourseIds, cb);
+	})
+};
+
+var detachTypesOfResourse = function (resourseId, typesOfResourseId, cb) {
+	connection.query(
+			   'DELETE FROM resourse_type_of_resourse 			\
+				WHERE ResourseId = ' + resourseId + '			\
+					AND TypeOfResourseId IN (' + typesOfResourseId.join(',') + ')',
+	function (err) {
+		cb(err);
+	});
+};
+
+var update = function (resourse, cb) {
+
+	connection.query(
+		'UPDATE resourse SET ? WHERE ResourseId = ?',
+		[{ 
+			RegionId: resourse.RegionId, 
+			Name: resourse.Name, 
+			PhotoUrl: resourse.PhotoUrl, 
+			Description: resourse.Description, 
+			Content: resourse.Content 
+		}, resourse.ResourseId],
+		function (err, result) {
+			if (err) {
+				cb(err);
+			};
+			
+			getById(resourse.ResourseId, function (err, current) {
+				var typesOfResourseToDetach = [];
+				current.TypeOfResourseIds.forEach(function (id) {
+					if (resourse.TypeOfResourseIds.indexOf(id) < 0) {
+						typesOfResourseToDetach.push(id);
+					};
+				});
+
+				var typesOfResourseToAttach = [];
+				resourse.TypeOfResourseIds.forEach(function (id) {
+					if (current.TypeOfResourseIds.indexOf(id) < 0) {
+						typesOfResourseToAttach.push(id);
+					};
+				});
+
+				var typesOfTourismToDetach = [];
+				current.TypeOfTourismIds.forEach(function (id) {
+					if (resourse.TypeOfTourismIds.indexOf(id) < 0) {
+						typesOfTourismToDetach.push(id);
+					};
+				});
+
+				var typesOfTourismToAttach = [];
+				resourse.TypeOfTourismIds.forEach(function (id) {
+					if (current.TypeOfTourismIds.indexOf(id) < 0) {
+						typesOfTourismToAttach.push(id);
+					};
+				});
+
+				console.log("NEW ITEM");
+				console.log(resourse);
+				console.log("OLD ITEM");
+				console.log(current);
+				console.log("typesOfResourseToDetach");
+				console.log(typesOfResourseToDetach);
+				console.log("typesOfResourseToAttach");
+				console.log(typesOfResourseToAttach);
+				console.log("typesOfTourismToDetach");
+				console.log(typesOfTourismToDetach);
+				console.log("typesOfTourismToAttach");
+				console.log(typesOfTourismToAttach);
+
+				async.parallel([
+						async.apply(detachTypesOfResourse, resourse.ResourseId, typesOfResourseToDetach),
+						async.apply(attachTypesOfResourse, resourse.ResourseId, typesOfResourseToAttach),
+						async.apply(detachTypesOfTourism, resourse.ResourseId, typesOfTourismToDetach),
+						async.apply(attachTypesOfTourism, resourse.ResourseId, typesOfTourismToAttach),
+					], function () {
+						cb();
+					});
+			});
+		}
+	);
+};
+
+module.exports.update = update;

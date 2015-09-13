@@ -1,13 +1,13 @@
 var connection = require('./Db');
 
-module.exports.getAll = function (cb, next) {
+module.exports.getAll = function (cb) {
 	connection.query('SELECT RegionId, Name FROM region',
 		function (err, rows, fields) {
 			if (err) {
-				next();
+				cb(err);
 			};
 
-			cb(rows);
+			cb(null, rows);
 		}
 	);
 };

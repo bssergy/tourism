@@ -1,8 +1,10 @@
 extends ./../layout
 block content
   div.container
-    h1 Новий ресурс
+    h1= title
     form(action="/admin/resourse/add/", method="post")
+      if resourse
+        input(type="hidden", id="ResourseId", name="ResourseId", value=resourse.ResourseId)
       div.row
         div.col-md-6
           div.form-group
@@ -21,28 +23,31 @@ block content
             label(for="RegionId") Область
             select(id="RegionId", name="RegionId").form-control.selectpicker
               each region in regions
-                if region.RegionId == selectedRegion
+                if resourse && region.RegionId == resourse.RegionId
                   option(value=region.RegionId, selected)= region.Name
                 else
                   option(value=region.RegionId)= region.Name
           div.form-group
-            label(for="TypeOfTourismId") Вид туризму
-            select(id="TypeOfTourismId", name="TypeOfTourismId", multiple).form-control.selectpicker
+            label(for="TypeOfTourismIds") Вид туризму
+            select(id="TypeOfTourismIds", name="TypeOfTourismIds", multiple).form-control.selectpicker
               option Не вибрано
               optgroup
               each typeOfTourism in typesOfTourism
-                if typeOfTourism.TypeOfTourismId == selectedTypeOfToursim
+                if resourse && resourse.TypeOfTourismIds && resourse.TypeOfTourismIds.indexOf(typeOfTourism.TypeOfTourismId) >= 0
                   option(value=typeOfTourism.TypeOfTourismId, selected)= typeOfTourism.Name
                 else
                   option(value=typeOfTourism.TypeOfTourismId)= typeOfTourism.Name
           div.form-group
-            label(for="TypeOfResourseId") Вид ресурсу
-            select(id="TypeOfResourseId", name="TypeOfResourseId", multiple).form-control.selectpicker
+            label(for="TypeOfResourseIds") Вид ресурсу
+            select(id="TypeOfResourseIds", name="TypeOfResourseIds", multiple).form-control.selectpicker
               option Не вибрано
               each groupOfResourse in groupsOfResourse
                 optgroup(label = groupOfResourse.Name)
                   each typeOfResourse in groupOfResourse.types
-                    option(value=typeOfResourse.TypeOfResourseId)= typeOfResourse.Name
+                    if resourse && resourse.TypeOfResourseIds && resourse.TypeOfResourseIds.indexOf(typeOfResourse.TypeOfResourseId) >= 0
+                      option(value=typeOfResourse.TypeOfResourseId, selected)= typeOfResourse.Name
+                    else
+                      option(value=typeOfResourse.TypeOfResourseId)= typeOfResourse.Name
       div.form-group
         label(for="Content") Інформація
         textarea(id="Content", name="Content",rows="20")

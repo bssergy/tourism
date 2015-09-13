@@ -25,13 +25,25 @@ router.get('/resourse', function(req, res, next) {
 			pageSize: pageSize,
 			pagesCount: pagesCount
 		});
-	}, next);
+	});
 });
 
 router.get('/resourse/add', function(req, res, next) {
-	region.getAll(function (regions) {
-		var typesOfTourism = typeOfTourism.getAll(function (typesOfTourism) {
-			var groupsOfResourse = groupOfResourse.getAllWithTypesOrResourses(function (groupsOfResourse) {
+	region.getAll(function (err, regions) {
+		if (err) {
+			next(err);
+		};
+
+		var typesOfTourism = typeOfTourism.getAll(function (err, typesOfTourism) {
+			if (err) {
+				next(err);
+			};
+
+			var groupsOfResourse = groupOfResourse.getAllWithTypesOrResourses(function (err, groupsOfResourse) {
+				if (err) {
+					next(err);
+				};
+
 				res.render('./admin/add', 
 					{ 
 						title: 'Новий ресурс',
@@ -40,36 +52,48 @@ router.get('/resourse/add', function(req, res, next) {
 						groupsOfResourse: groupsOfResourse
 					}
 				);
-			}, next);
-		}, next);
-	}, next);
+			});
+		});
+	});
 });
 
 router.get('/resourse/edit/:id', function(req, res, next) {
-	region.getAll(function (regions) {
-		var typesOfTourism = typeOfTourism.getAll(function (typesOfTourism) {
-			var groupsOfResourse = groupOfResourse.getAllWithTypesOrResourses(function (groupsOfResourse) {
+	region.getAll(function (err, regions) {
+		if (err) {
+			next(err);
+		};
+
+		var typesOfTourism = typeOfTourism.getAll(function (err, typesOfTourism) {
+			if (err) {
+				next(err);
+			};
+
+			var groupsOfResourse = groupOfResourse.getAllWithTypesOrResourses(function (err, groupsOfResourse) {
+				if (err) {
+					next(err);
+				};
+
 				resourse.getById(req.params.id, function (err, resourse) {
 					if (err) {
 						next(err);
 					};
-					
+
 					res.render('./admin/add', 
 					{ 
-						title: 'Новий ресурс',
+						title: 'Редагування ресурсу',
 						regions: regions,
 						typesOfTourism: typesOfTourism,
 						groupsOfResourse: groupsOfResourse,
 						resourse: resourse
 					});
 				});
-			}, next);
-		}, next);
-	}, next);
+			});
+		});
+	});
 });
 
 router.post('/resourse/add', function(req, res, next) {
-	resourse.add(req.body, function (result) {
+	resourse.addOrUpdate(req.body, function (result) {
 		res.redirect('/admin/resourse');
 		return;
 	}, next);
