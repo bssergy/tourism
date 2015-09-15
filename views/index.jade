@@ -1,9 +1,6 @@
 extends layout
 
 block content
-  div.logo-wrapper
-    h1= 'Туристичні ресурси України'
-
   div#myCarousel.carousel.slide(data-ride='carousel')
     ol.carousel-indicators
       li(data-target='#myCarousel', data-slide-to='0').active
@@ -63,49 +60,14 @@ block content
                   option(valuse=typeOfResourse.TypeOfResourseId)= typeOfResourse.Name
         div.form-group
           a.btn.btn-primary Показати
-    div.col-md-3
-      h4 Вид туризму
-      ul.nav.nav-pills.nav-stacked
-        li.active
-          a(href="#") Всі види
-        - for (var i = 0; i < typesOfTourism.length; i++) {
-            li
-              a(href="#")= typesOfTourism[i].Name
-        - }
-      h4 Область
-      ul.nav.nav-pills.nav-stacked
-        if region
-          li
-            a(href="/") Вся Україна
-        else
-          li.active
-            a(href="/") Вся Україна
-        - for (var i = 0; i < regions.length; i++) {
-            if region == regions[i].RegionId
-              li.active
-                a(href="?region=" + regions[i].RegionId).active= regions[i].Name
-            else
-              li
-                a(href="?region=" + regions[i].RegionId)= regions[i].Name
-        - }
-    div.col-md-9
-      - for (var i = 0; i < groupsOfResourse.length; i++) {
-          div.panel.panel-default
-            div.panel-heading
-              h3.panel-title= groupsOfResourse[i].Name
-            div.panel-body
-              - for (var j = 0; j < groupsOfResourse[i].types.length; j++) {
-                - if (j % 3 == 0) {
-                  div.row
-                - }
-                    div.col-sm-6.col-md-4
-                      div.thumbnail
-                        img(src="http://placehold.it/242X200")
-                        div.caption
-                          h3= groupsOfResourse[i].types[j].Name
-                          a.btn.btn-primary(role="button") Переглянути
-              - }
-      - }
+    div.row
+      each resourse in resourses.resourses
+        div.col-sm-4.col-md-3
+          div.thumbnail
+            img(src= resourse.PhotoUrl ? resourse.PhotoUrl : "http://placehold.it/242X200")
+            div.caption
+              h3= resourse.Name
+              a.btn.btn-primary(role="button") Переглянути
 block scripts
   script.
     $(document).ready(function() {

@@ -8,7 +8,8 @@ module.exports.getAllPaged = function (page, size, cb) {
 	    	ResourseId,											\
 	    	Name,												\
 	    	Description,										\
-	    	CreatedOn											\
+	    	CreatedOn,											\
+	    	PhotoUrl											\
 	    FROM resourse 											\
 	    ORDER BY ResourseId 					 				\
 	    LIMIT ' + page * size + ',' + size,
