@@ -96,7 +96,13 @@ router.post('/resourse/add', function(req, res, next) {
 	resourse.addOrUpdate(req.body, function (result) {
 		res.redirect('/admin/resourse');
 		return;
-	}, next);
+	});
+});
+
+router.post('/resourse/delete/:id', function(req, res, next) {
+	resourse.delete(req.params.id, function (result) {
+		res.send({success: true});
+	});
 });
 
 module.exports = router;

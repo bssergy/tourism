@@ -20,7 +20,7 @@ block content
           td
             a(href="/admin/resourse/edit/" + resourse.ResourseId) Змінити
             |  | 
-            a Видалити
+            a(href="/admin/resourse/delete/" + resourse.ResourseId).delete-btn Видалити
     nav
       ul.pagination
         li(class=page == 0 ? 'disabled' : '')
@@ -32,3 +32,18 @@ block content
         li(class=page == pagesCount - 1 ? 'disabled' : '')
           a(href="/admin/resourse?page=" + (page + 1) aria-label="Next")
             span(aria-hidden="true") &raquo;
+block scripts
+  sctipt.
+    <script>
+      $(document).ready(function() {
+        $('.delete-btn').click(function(e) {
+          e.preventDefault();
+          if(confirm("Ви справді бажаєте видалити цей ресурс?")) {
+            $.post($(this).attr('href'), function(data) {
+              location.reload();
+            });
+          }
+          return false;
+        });
+      });
+    </script>

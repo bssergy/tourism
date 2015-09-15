@@ -219,16 +219,20 @@ var attachTypesOfTourism = function (resourseId, typeOfTourismIds, cb) {
 };
 
 var detachTypesOfTourism = function (resourseId, typesOfTourismId, cb) {
-	if (!typesOfTourismId.length) {
+	if (typesOfTourismId && !typesOfTourismId.length) {
 		cb();
 		return;
 	};
 
-	connection.query(
+	var query =
 			   'DELETE FROM resourse_type_of_tourism 			\
-				WHERE ResourseId = ' + resourseId + '			\
-					AND TypeOfTourismId IN (' + typesOfTourismId.join(',') + ')',
-	function (err) {
+				WHERE ResourseId = ' + resourseId;
+
+	if (typesOfTourismId) {
+		query += ' AND TypeOfTourismId IN (' + typesOfTourismId.join(',') + ')';
+	};
+
+	connection.query(query, function (err) {
 		cb(err);
 	});
 };
@@ -259,11 +263,20 @@ var attachTypesOfResourse = function (resourseId, typeOfResourseIds, cb) {
 };
 
 var detachTypesOfResourse = function (resourseId, typesOfResourseId, cb) {
-	connection.query(
+	if (typesOfResourseId && !typesOfResourseId.length) {
+		cb();
+		return;
+	};
+
+	var query =
 			   'DELETE FROM resourse_type_of_resourse 			\
-				WHERE ResourseId = ' + resourseId + '			\
-					AND TypeOfResourseId IN (' + typesOfResourseId.join(',') + ')',
-	function (err) {
+				WHERE ResourseId = ' + resourseId;
+
+	if (typesOfResourseId) {
+		query += ' AND TypeOfResourseId IN (' + typesOfResourseId.join(',') + ')';
+	};
+
+	connection.query(query, function (err) {
 		cb(err);
 	});
 };
@@ -340,3 +353,20 @@ var update = function (resourse, cb) {
 };
 
 module.exports.update = update;
+
+module.exports.delete = function  (id, cb) {
+	async.parallel([
+			async.apply(detachTypesOfResourse, id, null),
+			async.apply(detachTypesOfTourism, id, null),
+		], function () {
+			var query =
+			   'DELETE FROM resourse 							\
+				WHERE ResourseId = ' + id
+
+			connection.query(query,	function (err) {
+				cb(err);
+			});
+		});
+
+	
+}
