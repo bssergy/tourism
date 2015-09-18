@@ -17,11 +17,11 @@ block content
               a.btn.btn-lg.btn-primary(href='#') Переглянути
   div.container
     div.toolbar
-      form.form-inline
+      form(action='/' method='get').form-inline
         div.form-group
           label(for="regionInput") Область
         div.form-group
-          select(id="regionInput").form-control.selectpicker
+          select(id="regionInput" name="regionInput").form-control.selectpicker
             if selectedRegion
               option Всі області
             else
@@ -35,11 +35,11 @@ block content
         div.form-group
           label(for="typeOfTourismInput") Вид туризму
         div.form-group
-          select(id="typeOfTourismInput").form-control.selectpicker
+          select(id="typeOfTourismInput" name="typeOfTourismInput" multiple).form-control.selectpicker
             if selectedTypeOfToursim
               option Всі види
             else
-              option(selected) Всі види
+              option(value="" selected) Всі види
             optgroup
             each typeOfTourism in typesOfTourism
               if typeOfTourism.TypeOfTourismId == selectedTypeOfToursim
@@ -49,17 +49,17 @@ block content
         div.form-group
           label(for="typeOfResourseInput") Вид ресурсу
         div.form-group
-          select(id="typeOfResourseInput").form-control.selectpicker
+          select(id="typeOfResourseInput" name="typeOfResourseInput" multiple).form-control.selectpicker
             if selectedTypeOfResourse
-              option Всі види
+              option(value="") Всі види
             else
-              option(selected) Всі види
+              option(value="" selected) Всі види
             each groupOfResourse in groupsOfResourse
               optgroup(label = groupOfResourse.Name)
                 each typeOfResourse in groupOfResourse.types
                   option(valuse=typeOfResourse.TypeOfResourseId)= typeOfResourse.Name
         div.form-group
-          a.btn.btn-primary Показати
+          button(type="submit").btn.btn-primary Показати
     div.row
       each resourse in resourses.resourses
         div.col-sm-4.col-md-3
@@ -67,9 +67,14 @@ block content
             img(src= resourse.PhotoUrl ? resourse.PhotoUrl : "http://placehold.it/242X200")
             div.caption
               h3= resourse.Name
-              a.btn.btn-primary(role="button") Переглянути
+              p= resourse.Description
+              p
+                a.btn.btn-primary(role="button") Переглянути
 block scripts
+  script(src='/js/bootstrap-select/bootstrap-select-all.js')
   script.
     $(document).ready(function() {
       $('.selectpicker').selectpicker();
+      $('#typeOfTourismInput').selectAll();
+      $('#typeOfResourseInput').selectAll();
     });
