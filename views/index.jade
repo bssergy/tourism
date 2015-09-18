@@ -57,7 +57,7 @@ block content
             each groupOfResourse in groupsOfResourse
               optgroup(label = groupOfResourse.Name)
                 each typeOfResourse in groupOfResourse.types
-                  option(valuse=typeOfResourse.TypeOfResourseId)= typeOfResourse.Name
+                  option(value=typeOfResourse.TypeOfResourseId)= typeOfResourse.Name
         div.form-group
           button(type="submit").btn.btn-primary Показати
     div.row
