@@ -6,8 +6,12 @@ var groupOfResourse = require('./../models/GroupOfResourse');
 var resourse = require('./../models/Resourse');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-	var selectedRegion = req.query.region;
+router.get('/:typeOfResourseInput*?', function(req, res, next) {
+	var typesOfResourseInput = req.query.typeOfResourseInput;
+	console.log(typesOfResourseInput);
+	var selectedRegion = req.query.r;
+	var selectedTypesOfTourism = req.query.tt || [];
+	var selectedTypesOfResourse = req.query.tr || [];
 	var regions = region.getAll(function (err, regions) {
 		if (err) {
 			next(err);
@@ -35,6 +39,8 @@ router.get('/', function(req, res, next) {
 							typesOfTourism: typesOfTourism,
 							groupsOfResourse: groupsOfResourse,
 							selectedRegion: selectedRegion,
+							selectedTypesOfTourism: selectedTypesOfTourism,
+							selectedTypesOfResourse: selectedTypesOfResourse,
 							resourses: resourses
 						}
 					);

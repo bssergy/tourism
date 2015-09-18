@@ -17,7 +17,7 @@ block content
               a.btn.btn-lg.btn-primary(href='#') Переглянути
   div.container
     div.toolbar
-      form(action='/' method='get').form-inline
+      form(action='/' method='get' id="filterFrm").form-inline
         div.form-group
           label(for="regionInput") Область
         div.form-group
@@ -25,7 +25,7 @@ block content
             if selectedRegion
               option Всі області
             else
-              option(selected) Всі області
+              option(value="" selected) Всі області
             optgroup
             each region in regions
               if region.RegionId == selectedRegion
@@ -36,13 +36,13 @@ block content
           label(for="typeOfTourismInput") Вид туризму
         div.form-group
           select(id="typeOfTourismInput" name="typeOfTourismInput" multiple).form-control.selectpicker
-            if selectedTypeOfToursim
-              option Всі види
+            if selectedTypesOfTourism.length
+              option(value="") Всі види
             else
               option(value="" selected) Всі види
             optgroup
             each typeOfTourism in typesOfTourism
-              if typeOfTourism.TypeOfTourismId == selectedTypeOfToursim
+              if selectedTypesOfTourism.indexOf(typeOfTourism.TypeOfTourismId) >= 0
                 option(value=typeOfTourism.TypeOfTourismId, selected)= typeOfTourism.Name
               else
                 option(value=typeOfTourism.TypeOfTourismId)= typeOfTourism.Name
@@ -50,14 +50,17 @@ block content
           label(for="typeOfResourseInput") Вид ресурсу
         div.form-group
           select(id="typeOfResourseInput" name="typeOfResourseInput" multiple).form-control.selectpicker
-            if selectedTypeOfResourse
+            if selectedTypesOfResourse.length
               option(value="") Всі види
             else
               option(value="" selected) Всі види
             each groupOfResourse in groupsOfResourse
               optgroup(label = groupOfResourse.Name)
                 each typeOfResourse in groupOfResourse.types
-                  option(value=typeOfResourse.TypeOfResourseId)= typeOfResourse.Name
+                  if selectedTypesOfResourse.indexOf(typeOfResourse.TypeOfResourseId) >= 0
+                    option(value=typeOfResourse.TypeOfResourseId selected)= typeOfResourse.Name
+                  else
+                    option(value=typeOfResourse.TypeOfResourseId)= typeOfResourse.Name
         div.form-group
           button(type="submit").btn.btn-primary Показати
     div.row
@@ -77,4 +80,28 @@ block scripts
       $('.selectpicker').selectpicker();
       $('#typeOfTourismInput').selectAll();
       $('#typeOfResourseInput').selectAll();
+
+      $('#filterFrm').submit(function(e) {
+        e.preventDefault();
+        var regionId = $('#regionInput').val();
+        var typeOfTourismIds = $('#typeOfTourismInput').val();
+        var typeOfResourseIds = $('#typeOfResourseInput').val();
+        var parameters = [];
+        if (regionId != '')
+        {
+          parameters.push('r=' + regionId);
+        }
+        if (typeOfTourismIds[0] != '') {
+          parameters.push('tt=' + typeOfTourismIds.join());
+        }
+        if (typeOfResourseIds[0] != '') {
+          parameters.push('tr=' + typeOfResourseIds.join());
+        }
+        var queryString = '';
+        if (parameters.length) {
+          queryString += '?' + parameters.join('&');
+        }
+        window.location.href = '/' + queryString;
+        return false;
+      });
     });
