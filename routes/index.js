@@ -6,12 +6,13 @@ var groupOfResourse = require('./../models/GroupOfResourse');
 var resourse = require('./../models/Resourse');
 
 /* GET home page. */
-router.get('/:typeOfResourseInput*?', function(req, res, next) {
+router.get('/:page*?', function(req, res, next) {
 	var typesOfResourseInput = req.query.typeOfResourseInput;
 	console.log(typesOfResourseInput);
 	var selectedRegion = req.query.rid;
 	var selectedTypesOfTourism = req.query.ttid || [];
 	var selectedTypesOfResourse = req.query.trid || [];
+	var page = req.params.page;
 	var regions = region.getAll(function (err, regions) {
 		if (err) {
 			next(err);
@@ -27,7 +28,7 @@ router.get('/:typeOfResourseInput*?', function(req, res, next) {
 					next(err);
 				};
 
-				resourse.getAllPaged(0, 12, function (err, resourses) {
+				resourse.getAllPaged(page, 12, function (err, resourses) {
 					if (err) {
 						next(err);
 					};

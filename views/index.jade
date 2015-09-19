@@ -73,6 +73,12 @@ block content
               p= resourse.Description
               p
                 a.btn.btn-primary(role="button") Переглянути
+    nav
+      ul.pager
+        li(class=!page ? 'disabled' : '')
+          a(href="#") Попередні
+        li
+          a(href="#") Наступні
 block scripts
   script(src='/js/bootstrap-select/bootstrap-select-all.js')
   script.
