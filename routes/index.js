@@ -6,13 +6,13 @@ var groupOfResourse = require('./../models/GroupOfResourse');
 var resourse = require('./../models/Resourse');
 
 /* GET home page. */
-router.get('/:page*?', function(req, res, next) {
+router.get('/', function(req, res, next) {
 	var typesOfResourseInput = req.query.typeOfResourseInput;
-	console.log(typesOfResourseInput);
 	var selectedRegion = req.query.rid;
 	var selectedTypesOfTourism = req.query.ttid || [];
 	var selectedTypesOfResourse = req.query.trid || [];
-	var page = req.params.page;
+	var page = parseInt(req.query.page) || 0;
+	var pageSize = 12;
 	var regions = region.getAll(function (err, regions) {
 		if (err) {
 			next(err);
@@ -27,12 +27,18 @@ router.get('/:page*?', function(req, res, next) {
 				if (err) {
 					next(err);
 				};
-
-				resourse.getAllPaged(page, 12, function (err, resourses) {
+				
+				resourse.getAllPaged(page, 12, function (err, results) {
 					if (err) {
 						next(err);
 					};
-					
+
+					var pagesCount = Math.ceil(results.count / pageSize);
+					if (page + 1 > pagesCount) {
+						res.status(404);
+						return next();
+					};
+
 					res.render('index', 
 						{ 
 							title: 'Туристичні ресурси України',
@@ -42,7 +48,9 @@ router.get('/:page*?', function(req, res, next) {
 							selectedRegion: selectedRegion,
 							selectedTypesOfTourism: selectedTypesOfTourism,
 							selectedTypesOfResourse: selectedTypesOfResourse,
-							resourses: resourses
+							resourses: results.resourses,
+							page: page,
+							last: page + 1 >= pagesCount
 						}
 					);
 				});

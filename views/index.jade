@@ -64,7 +64,7 @@ block content
         div.form-group
           button(type="submit").btn.btn-primary Показати
     div.row
-      each resourse in resourses.resourses
+      each resourse in resourses
         div.col-sm-4.col-md-3
           div.thumbnail
             img(src= resourse.PhotoUrl ? resourse.PhotoUrl : "http://placehold.it/242X200")
@@ -73,12 +73,13 @@ block content
               p= resourse.Description
               p
                 a.btn.btn-primary(role="button") Переглянути
+    input(type="hidden" value=page id="page")
     nav
       ul.pager
         li(class=!page ? 'disabled' : '')
-          a(href="#") Попередні
-        li
-          a(href="#") Наступні
+          a(href="#").previous-page Попередні
+        li(class=last ? 'disabled' : '')
+          a(href="#").next-page Наступні
 block scripts
   script(src='/js/bootstrap-select/bootstrap-select-all.js')
   script.
@@ -89,6 +90,11 @@ block scripts
 
       $('#filterFrm').submit(function(e) {
         e.preventDefault();
+        submitForm();
+        return false;
+      });
+
+      var submitForm = function(page) {
         var regionId = $('#regionInput').val();
         var typeOfTourismIds = $('#typeOfTourismInput').val();
         var typeOfResourseIds = $('#typeOfResourseInput').val();
@@ -103,11 +109,19 @@ block scripts
         if (typeOfResourseIds[0] != '') {
           parameters.push('trid=' + typeOfResourseIds.join());
         }
+        if (page) {
+          parameters.push('page=' + page);
+        }
         var queryString = '';
         if (parameters.length) {
           queryString += '?' + parameters.join('&');
         }
         window.location.href = '/' + queryString;
+      };
+      $('nav ul.pager li a').click(function (e) {
+        e.preventDefault();
+        var page = parseInt($("#page").val()) || 0;
+        submitForm($(this).hasClass('next-page') ? page + 1 : page - 1);
         return false;
       });
     });
