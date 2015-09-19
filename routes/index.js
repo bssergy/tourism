@@ -9,9 +9,9 @@ var resourse = require('./../models/Resourse');
 router.get('/:typeOfResourseInput*?', function(req, res, next) {
 	var typesOfResourseInput = req.query.typeOfResourseInput;
 	console.log(typesOfResourseInput);
-	var selectedRegion = req.query.r;
-	var selectedTypesOfTourism = req.query.tt || [];
-	var selectedTypesOfResourse = req.query.tr || [];
+	var selectedRegion = req.query.rid;
+	var selectedTypesOfTourism = req.query.ttid || [];
+	var selectedTypesOfResourse = req.query.trid || [];
 	var regions = region.getAll(function (err, regions) {
 		if (err) {
 			next(err);

@@ -89,13 +89,13 @@ block scripts
         var parameters = [];
         if (regionId != '')
         {
-          parameters.push('r=' + regionId);
+          parameters.push('rid=' + regionId);
         }
         if (typeOfTourismIds[0] != '') {
-          parameters.push('tt=' + typeOfTourismIds.join());
+          parameters.push('ttid=' + typeOfTourismIds.join());
         }
         if (typeOfResourseIds[0] != '') {
-          parameters.push('tr=' + typeOfResourseIds.join());
+          parameters.push('trid=' + typeOfResourseIds.join());
         }
         var queryString = '';
         if (parameters.length) {
