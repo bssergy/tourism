@@ -12,7 +12,7 @@ router.get('/resourse', function(req, res, next) {
 	var page = parseInt(req.query.page) || 0;
 	var pageSize = parseInt(req.query.pageSize) || 10;
 	
-	resourse.getAllPaged(page, pageSize, function (err, results) {
+	resourse.getAllPaged(page, pageSize, null, function (err, results) {
 		if (err) {
 			next(err);
 		};

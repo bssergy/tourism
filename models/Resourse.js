@@ -2,24 +2,63 @@ var connection = require('./Db');
 var mysql = require('mysql');
 var async = require('async');
 
-module.exports.getAllPaged = function (page, size, cb) {
+module.exports.getAllPaged = function (page, size, filter, cb) {
+	var query =
+		'SELECT 												\
+	    	r.ResourseId,										\
+	    	r.Name,												\
+	    	r.Description,										\
+	    	r.CreatedOn,										\
+	    	r.PhotoUrl											\
+	    FROM resourse r';
+
+	var joinClauses = [];
+	var whereClauses = [];
+	
+	if (filter && filter.TypeOfTourismIds) {
+		joinClauses.push('JOIN resourse_type_of_tourism tt ON r.ResourseId = tt.ResourseId');
+		whereClauses.push('tt.TypeOfTourismId IN (' + filter.TypeOfTourismIds + ')');
+	};
+	if (filter && filter.TypeOfResourseIds) {
+		joinClauses.push('JOIN resourse_type_of_resourse tr ON r.ResourseId = tr.ResourseId');
+		whereClauses.push('tr.TypeOfResourseId IN (' + filter.TypeOfResourseIds + ')');
+	};
+
+	if (filter && filter.RegionId)
+	{
+		whereClauses.push('r.RegionId = ' + filter.RegionId);
+	}
+	var joinClause = joinClauses.join('\n');
+	var whereClause = whereClauses.join(' AND ');
+
+	if (joinClause) {
+		query += '\n' + joinClause;
+	};
+
+	if (whereClause) {
+		query += '\nWHERE ' + whereClause;
+	};
+
+	query += '\nORDER BY r.ResourseId';
+	query += '\nLIMIT ' + page * size + ',' + size;
 	connection.query(
-	   'SELECT 													\
-	    	ResourseId,											\
-	    	Name,												\
-	    	Description,										\
-	    	CreatedOn,											\
-	    	PhotoUrl											\
-	    FROM resourse 											\
-	    ORDER BY ResourseId 					 				\
-	    LIMIT ' + page * size + ',' + size,
+	    query,
 		function (err, rows, fields) {
 			if (err) {
-				cb(err);
+				return cb(err);
+			};
+
+			var query = 'SELECT COUNT(1) AS Count FROM resourse r';
+			if (joinClause) {
+				query += '\n' + joinClause;
+			};
+
+			if (whereClause) {
+				query += '\nWHERE ' + whereClause;
 			};
 
 			var resourses = rows;
-			connection.query('SELECT COUNT(1) AS Count FROM resourse', function (err, rows) {
+			connection.query(query, function (err, rows) {
 				if (err) {
 					cb(err);
 				};
