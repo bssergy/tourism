@@ -77,7 +77,8 @@ var getById = function (id, cb) {
 	    	Name,												\
 	    	Description,										\
 	    	CreatedOn,											\
-	    	PhotoUrl											\
+	    	PhotoUrl,											\
+	    	Content											\
 	    FROM resourse 											\
 	    WHERE ResourseId = ?',
 	    [ id ],

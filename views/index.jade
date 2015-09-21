@@ -72,7 +72,7 @@ block content
               h3= resourse.Name
               p= resourse.Description
               p
-                a.btn.btn-primary(role="button") Переглянути
+                a.btn.btn-primary(role="button" href="/view/" + resourse.ResourseId) Переглянути
     input(type="hidden" value=page id="page")
     nav
       ul.pager

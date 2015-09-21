@@ -63,4 +63,10 @@ router.get('/', function(req, res, next) {
 	});
 });
 
+router.get('/view/:id', function (req, res, next) {
+	resourse.getById(req.params.id, function (err, resourse) {
+		res.send(resourse.Content);
+	})
+});
+
 module.exports = router;
